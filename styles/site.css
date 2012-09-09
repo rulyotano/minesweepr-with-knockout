@@ -1,5 +1,5 @@
 body {
-    background-color: #a0afb0;
+    background-color: #ebf0f2;
     font-size: .85em;
     font-family: "Trebuchet MS", Verdana, Helvetica, Sans-Serif;
     margin: 0;
@@ -14,3 +14,44 @@ body {
 .page {
 
 }
+
+/*--Cell templates-*/
+.unDiscoveredTableCell{
+    background: #8fcaeb;
+    height: 20px;
+    width: 20px;
+
+}
+
+.discoveredAndEmptyTableCell{
+    background: #95ebeb;
+    height: 20px;
+    width: 20px;
+}
+
+.discoveredAndNumberTableCell{
+    background: #7c4ceb;
+    height: 20px;
+    width: 20px;
+
+}
+
+.markedAsMineTableCell{
+    background: #ebadca;
+    height: 20px;
+    width: 20px;
+}
+
+.exploitedMineTableCell{
+    background: #eb2525;
+    height: 20px;
+    width: 20px;
+}
+
+.mineTableCell{
+    background: #eb908a;
+    height: 20px;
+    width: 20px;
+}
+
+/*--End cell templates-*/

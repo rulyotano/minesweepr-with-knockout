@@ -2,16 +2,32 @@
         "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+    <link href="styles/site.css" rel="stylesheet" type="text/css"/>
     <script type="text/javascript" src="js/jQuery/jquery-1.4.4.min.js"></script>
     <script type="text/javascript" src="js/nockout/knockout-2.0.0.js"></script>
-    <script type="text/javascript" src="js/viewModel.js"></script>
+    <script type="text/javascript" src="viewModels/viewModel.js"></script>
     <script type="text/javascript" src="js/startPoint.js"></script>
-    <link href="styles/site.css" rel="stylesheet" type="text/css"/>
     <title></title>
 </head>
 <body>
-    <p >This is a test text: <span  data-bind="color: testText"></span></p>
-    <p>This is a for edit test text: <input data-bind="value: testText"/> </p>
+
+<p >This is a test text: <span  data-bind="text: testText"></span></p>
+<p>This is a for edit test text: <input data-bind="value: testText"/> </p>
+
+<script type="text/html" id="cellTamplate">
+    <td data-bind="css: { unDiscoveredTableCell: value() == 'unDiscovered', discoveredAndEmptyTableCell: value() == 'discoveredAndEmpty',discoveredAndNumberTableCell: value() == 'discoveredAndNumber',markedAsMineTableCell: value() == 'markedAsMine',exploitedMineTableCell: value() == 'exploitedMine',mineTableCell: value() == 'mine' }"/>
+</script>
+
+<script type="text/html" id="rowTemplate">
+    <tr data-bind="template: { name: 'cellTamplate', foreach: cells }"></tr>
+</script>
+
+<script type="text/html"  id="tableTemplate">
+    <table data-bind="template: { name: 'rowTemplate', foreach: rows }"></table>
+</script>
+
+<div data-bind="template: { name: 'tableTemplate', data: board }"></div>
+
 
 
 </body>
