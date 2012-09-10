@@ -1,11 +1,14 @@
+var viewModel = null;
+Array.prototype.remove = function(index){
+    return this.slice(0, index).concat(this.slice(index + 1, this.length));
+}
 function startPoint()
 {
-    var viewModel = new mainViewModel();
+    viewModel = new mainViewModel();
 
     //var cell = viewModel.board.getCell(4,4);
     //cell.value("asdasd");
     ko.applyBindings(viewModel);
-    viewModel.board.rows[4].cells[4].value('unDiscovered');
 }
 $(document).ready(startPoint);
 

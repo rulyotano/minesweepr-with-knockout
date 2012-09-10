@@ -15,7 +15,9 @@
 <p>This is a for edit test text: <input data-bind="value: testText"/> </p>
 
 <script type="text/html" id="cellTamplate">
-    <td data-bind="css: { unDiscoveredTableCell: value() == 'unDiscovered', discoveredAndEmptyTableCell: value() == 'discoveredAndEmpty',discoveredAndNumberTableCell: value() == 'discoveredAndNumber',markedAsMineTableCell: value() == 'markedAsMine',exploitedMineTableCell: value() == 'exploitedMine',mineTableCell: value() == 'mine' }"/>
+    <td class="boardCell" data-bind="event: {mouseup:onMouseUp, mousedown:onMouseDown, dblclick:onDoubleClick }, css: { unDiscoveredTableCell: value() == 'unDiscovered', discoveredAndEmptyTableCell: value() == 'discoveredAndEmpty',discoveredAndNumberTableCell: value() == 'discoveredAndNumber',markedAsMineTableCell: value() == 'markedAsMine',exploitedMineTableCell: value() == 'exploitedMine',mineTableCell: value() == 'mine' }" >
+        <span data-bind="text: minesAround" ></span>
+    </td>
 </script>
 
 <script type="text/html" id="rowTemplate">
@@ -23,8 +25,17 @@
 </script>
 
 <script type="text/html"  id="tableTemplate">
-    <table data-bind="template: { name: 'rowTemplate', foreach: rows }"></table>
+    <table class="board" data-bind="template: { name: 'rowTemplate', foreach: rows }"></table>
 </script>
+
+<div class="information">
+   <span><b>Mines that left:</b></span>
+   <span data-bind="text: minesThatLeft"></span>
+   <button data-bind="click: resetGame">Reset</button>
+   <button data-bind="click: startGame">Start</button>
+   <span><b>Time:</b></span>
+   <span data-bind="text: elapsedTime"></span>
+</div>
 
 <div data-bind="template: { name: 'tableTemplate', data: board }"></div>
 
