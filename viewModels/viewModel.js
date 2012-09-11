@@ -1,10 +1,10 @@
+var interpretations = { 0:"unDiscovered", 1: "discoveredAndEmpty", 2:"discoveredAndNumber", 3: "markedAsMine", 4:"exploitedMine", 5:"mine", 6:"markedAsMineButEmpty"  };
+
 function mainViewModel()
 {
     var tthis = this;
     var timerid = null;
-    var directionsX = [-1, 0, 1, 0,-1, 1, 1,-1];
-    var directionsY = [ 0, 1, 0,-1, 1, 1,-1,-1];
-    //directions: up-right-down-left-(up&right)-(down&right)-(down&left)-(up&left)
+
 
     this.testText = ko.observable("red");
     this.width = 10;
@@ -16,6 +16,9 @@ function mainViewModel()
     //if user is playing ot not
     this.isPlaying = false;
 
+    //if users can play - if is restarted
+    this.canPlay = true;
+
     //time that left
     this.elapsedTime = ko.observable(0);
 
@@ -23,6 +26,8 @@ function mainViewModel()
 
     //mines that left
     this.minesThatLeft = ko.dependentObservable(function(){ return tthis.mines() - tthis.minesDiscovered() });
+
+    this.freeSpaces = (this.width * this.height) - this.mines();
 
     //board state
     this.boardState = new Array(this.height);
@@ -87,25 +92,27 @@ function mainViewModel()
 
         //now calcualte the numbers
         for (var i = 0; i < tthis.height; i++)
+        {
             for (var j = 0; j < tthis.width; j++)
             {
                 //if there is mine
                 if (tthis.boardState[i][j] == -1)
                 {
                     //increment 1 in all arround
-                    for (var d =0; d<8; d++)
+                    var cells = tthis.board.getCellsAround(i,j);
+                    for (var k = 0; k < cells.length; k++)
                     {
-                        var currentX = i + directionsX[d];
-                        var currentY = j + directionsY[d];
-                        if (currentX>=0 && currentX < tthis.height && currentY>=0 && currentY < tthis.width && tthis.boardState[currentX][currentY]>-1)
-                            tthis.boardState[currentX][currentY]++;
+                        cell = cells[k];
+                        if (tthis.boardState[cell.x][cell.y] > -1)
+                            tthis.boardState[cell.x][cell.y]++;
                     }
                 }
             }
+        }
        //only for test
-        for (var i = 0; i < tthis.height; i++)
-            for (var j = 0; j < tthis.width; j++)
-                tthis.board.getCell(i,j).minesAround(tthis.boardState[i][j]);
+//        for (var i = 0; i < tthis.height; i++)
+//            for (var j = 0; j < tthis.width; j++)
+//                tthis.board.getCell(i,j).minesAround(tthis.boardState[i][j]);
     }
 
     this.onTimeTick = function(){
@@ -114,11 +121,19 @@ function mainViewModel()
     }
 
     this.resetGame = function(){
-        this.isPlaying = false;
-        this.pclearBoards();
+        tthis.isPlaying = false;
+
+        //clear boards
+        tthis.pclearBoards();
+
+        //reset variables
         tthis.elapsedTime(0);
         tthis.minesDiscovered(0);
-        window.clearTimeout(timerid);
+
+        //stop the timer
+        clearTimeout(timerid);
+        tthis.canPlay = true;
+        this.freeSpaces = (this.width * this.height) - this.mines();
     }
 
     this.startGame = function(initialX, initialY){
@@ -129,22 +144,147 @@ function mainViewModel()
             tthis.onTimeTick();
         }
     }
+        
+    this.explodeMine = function(X,Y)
+    {
+        //user is not playing
+        this.isPlaying = false;
+        
+        //stop the timer
+        clearTimeout(timerid);
+        
+        //cant play
+        this.canPlay = false;
+        
+        //set the mine that explode
+        tthis.board.getCell(X,Y).value(interpretations[4]);
+        
+        //discover all other mines
+        for (var i = 0; i<tthis.height; i++)
+            for (var j = 0; j < tthis.width; j++)
+            {
+                if (tthis.boardState[i][j] == -1 && tthis.board.getCell(i,j).value() == interpretations[0]) //if the mine is undiscovered
+                    tthis.board.getCell(i,j).value(interpretations[5]);     //discover mine
+                else if (tthis.board.getCell(i,j).value() == interpretations[3] && tthis.boardState[i][j] != -1)    //if is marked as mine, but was empty
+                    tthis.board.getCell(i,j).value(interpretations[6]);
+
+            }
+
+        //Notification mesaje
+        alert("You loose");
+    }
+
+    this.win = function()
+    {
+        //stop the timer
+        clearTimeout(timerid);
+        tthis.canPlay = false;
+        tthis.isPlaying = false;
+        alert("You win in "+tthis.elapsedTime()+" seconds");
+    }
+
+    this.markUnmarkMine = function(X,Y)
+    {
+        var cell = tthis.board.getCell(X,Y);
+
+        //check if is playing
+        if (!tthis.isPlaying)
+            return;
+
+        if (cell.value() == interpretations[3])
+        {
+            cell.value(interpretations[0]);        //unmark mine
+            tthis.minesDiscovered(tthis.minesDiscovered() - 1)  //mines discovered --
+        }
+        else if (cell.value() == interpretations[0])
+        {
+            cell.value(interpretations[3]);        //mark as mine
+            tthis.minesDiscovered(tthis.minesDiscovered() + 1)  //mines discovered ++
+        }
+    }
 
     this.discoverCell = function(X,Y){
+        //if cannot play, return
+        if (!tthis.canPlay)
+            return;
+        //if is not playing then start the game
         if (!tthis.isPlaying)
         {
             tthis.startGame(X,Y);
         }
+        //discover the cell
+        if(tthis.board.getCell(X,Y).value() == interpretations[0])  //if cell is undiscovered
+        {
+            //if is a mine
+            if (tthis.boardState[X][Y] == -1)
+            {
+                tthis.explodeMine(X,Y);
+                return;
+            }
+            //else
+            //if is a number
+            else if (tthis.boardState[X][Y] > 0)
+            {
+                tthis.board.getCell(X,Y).minesAround(tthis.boardState[X][Y]);
+                tthis.board.getCell(X,Y).value(interpretations[2]);
+            }
+            //if is 0
+            else if (tthis.boardState[X][Y] == 0)
+            {
+                tthis.board.getCell(X,Y).value(interpretations[1]);
+
+                //recusively discover all 0-mines places around
+                var cells = tthis.board.getCellsAround(X,Y);
+                for (var k = 0; k < cells.length; k++)
+                {
+                    cell = cells[k];
+                    //if the cell around is not discovered, then discover it
+                    if (cell.value() == interpretations[0])
+                        tthis.discoverCell(cell.x, cell.y);
+                }
+            }
+            tthis.freeSpaces--;
+            if(tthis.freeSpaces == 0)
+                tthis.win();
+        }
+    }
+
+    this.discoverAround = function(X,Y)
+    {
+        var cell = tthis.board.getCell(X,Y);
+
+        //if the cell is not e number, then return
+        if (cell.minesAround()== null || cell.minesAround() <= 0)
+            return;
+
+        //var mines around
+        var minesAround = cell.minesAround();
+
+        //mines marked to check
+        var minesMarkedAround = 0;
+
+        var cells = tthis.board.getCellsAround(X,Y);
+        for (var i = 0; i < cells.length; i++)
+            if (cells[i].value() == interpretations[3])
+                minesMarkedAround++;
+
+        //if minesAround is not equals to the marked then is an user error
+        if (minesAround != minesMarkedAround)
+            return;
+
+        for (var i = 0; i < cells.length; i++)
+            if (cells[i].value() == interpretations[0])     //if each cell around is undiscovered then discover it
+                tthis.discoverCell(cells[i].x, cells[i].y);
     }
 }
 
 //needed for the global timer
 function global_timerTick()
 {
+    //global view model
     viewModel.onTimeTick();
 }
 
-var interpretations = { 0:"unDiscovered", 1: "discoveredAndEmpty", 2:"discoveredAndNumber", 3: "markedAsMine", 4:"exploitedMine", 5:"mine"  };
 
 //view model for cells
 function cellViewModel(x,y,model)
@@ -157,27 +297,27 @@ function cellViewModel(x,y,model)
     this.value = ko.observable(interpretations[0])  //undiscovered by default
     this.minesAround = ko.observable();
     //methods
-    this.onMouseDown= function(viewmodel,evnt)
-    {
-
-    }
 
     this.onMouseUp=function(viewmodel, evnt)
     {
+
+
         if (evnt.button == 1 || evnt.button == 0)       //left
         {
-            tthis.model.discoverCell(tthis.x, tthis.y);
-            //alert(tthis.x + " " + tthis.y + " "+tthis.board);
+            tthis.model.discoverCell(tthis.x, tthis.y);     //discover that cell
         }
         else if (evnt.button == 2) //right
         {
-            tthis.value(interpretations[2]);
+            tthis.model.markUnmarkMine(tthis.x, tthis.y);
+            evnt.preventDefault();
+            evnt.stopPropagation();
+            evnt.cancelBubble = true
         }
     }
 
-    this.onDoubleClick= function(viewmodel,evnt)
+    this.discoverCellsAround= function(viewmodel,evnt)
     {
-        alert("DobleClick");
+        tthis.model.discoverAround(tthis.x, tthis.y);
     }
 };
 
@@ -196,6 +336,14 @@ function rowViewModel (width,rowNumber, model)
 function boradViewModel (height, width, model)
 {
     var tthis = this;
+
+    this.height = height;
+    this.width = width;
+
+    var directionsX = [-1, 0, 1, 0,-1, 1, 1,-1];
+    var directionsY = [ 0, 1, 0,-1, 1, 1,-1,-1];
+    //directions: up-right-down-left-(up&right)-(down&right)-(down&left)-(up&left)
+
     this.model = model;
     this.rows = new Array(height);
     for(var i = 0; i < height; i ++)
@@ -206,6 +354,19 @@ function boradViewModel (height, width, model)
     {
         return trows[i].cells[j];
     };
+
+    this.getCellsAround = function(X,Y)
+    {
+        var result = []
+        for (var d =0; d<8; d++)
+        {
+            var currentX = X + directionsX[d];
+            var currentY = Y + directionsY[d];
+            if (currentX>=0 && currentX < tthis.height && currentY>=0 && currentY < tthis.width)
+                result.push(tthis.getCell(currentX, currentY));
+        }
+        return result;
+    }
 
 };
 

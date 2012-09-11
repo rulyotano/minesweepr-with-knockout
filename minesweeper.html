@@ -15,7 +15,7 @@
 <p>This is a for edit test text: <input data-bind="value: testText"/> </p>
 
 <script type="text/html" id="cellTamplate">
-    <td class="boardCell" data-bind="event: {mouseup:onMouseUp, mousedown:onMouseDown, dblclick:onDoubleClick }, css: { unDiscoveredTableCell: value() == 'unDiscovered', discoveredAndEmptyTableCell: value() == 'discoveredAndEmpty',discoveredAndNumberTableCell: value() == 'discoveredAndNumber',markedAsMineTableCell: value() == 'markedAsMine',exploitedMineTableCell: value() == 'exploitedMine',mineTableCell: value() == 'mine' }" >
+    <td class="boardCell" data-bind="event: {mouseup:onMouseUp, dblclick:discoverCellsAround }, css: { unDiscoveredTableCell: value() == 'unDiscovered', discoveredAndEmptyTableCell: value() == 'discoveredAndEmpty',discoveredAndNumberTableCell: value() == 'discoveredAndNumber',markedAsMineTableCell: value() == 'markedAsMine',exploitedMineTableCell: value() == 'exploitedMine',mineTableCell: value() == 'mine',markedAsMineButEmptyCell :value() == 'markedAsMineButEmpty' }" >
         <span data-bind="text: minesAround" ></span>
     </td>
 </script>
