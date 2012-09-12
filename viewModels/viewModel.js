@@ -5,10 +5,15 @@ function mainViewModel()
     var tthis = this;
     var timerid = null;
 
+    this.messageViewModel = new messageViewModel();
 
     this.testText = ko.observable("red");
-    this.width = 10;
-    this.height = 10;
+    this.width = 9;
+    this.height = 9;
+
+    //lost win
+    this.isLost = ko.observable(false);
+    this.isWin = ko.observable(false);
 
     //mines
     this.mines = ko.observable(10);
@@ -53,7 +58,7 @@ function mainViewModel()
                 this.board.getCell(i,j).minesAround(null);
             }
         }
-    }
+    };
 
     this.generateMines = function(initialX, initialY)
     {
@@ -113,12 +118,12 @@ function mainViewModel()
 //        for (var i = 0; i < tthis.height; i++)
 //            for (var j = 0; j < tthis.width; j++)
 //                tthis.board.getCell(i,j).minesAround(tthis.boardState[i][j]);
-    }
+    };
 
     this.onTimeTick = function(){
         tthis.elapsedTime(tthis.elapsedTime() + 1);
         timerid = setTimeout("global_timerTick()",1000);
-    }
+    };
 
     this.resetGame = function(){
         tthis.isPlaying = false;
@@ -134,7 +139,9 @@ function mainViewModel()
         clearTimeout(timerid);
         tthis.canPlay = true;
         this.freeSpaces = (this.width * this.height) - this.mines();
-    }
+        tthis.isWin(false);
+        tthis.isLost(false);
+    };
 
     this.startGame = function(initialX, initialY){
         if (!tthis.isPlaying)
@@ -143,7 +150,7 @@ function mainViewModel()
             this.generateMines(initialX, initialY);
             tthis.onTimeTick();
         }
-    }
+    };
         
     this.explodeMine = function(X,Y)
     {
@@ -171,8 +178,9 @@ function mainViewModel()
             }
 
         //Notification mesaje
-        alert("You loose");
-    }
+        tthis.isLost(true);
+        tthis.messageViewModel.standardMesage("You lose :-(","Lose");
+    };
 
     this.win = function()
     {
@@ -180,8 +188,9 @@ function mainViewModel()
         clearTimeout(timerid);
         tthis.canPlay = false;
         tthis.isPlaying = false;
-        alert("You win in "+tthis.elapsedTime()+" seconds");
-    }
+        tthis.isWin(true);
+        tthis.messageViewModel.standardMesage("You win in "+tthis.elapsedTime()+" seconds", "Winer!!!!!");
+    };
 
     this.markUnmarkMine = function(X,Y)
     {
@@ -201,7 +210,7 @@ function mainViewModel()
             cell.value(interpretations[3]);        //mark as mine
             tthis.minesDiscovered(tthis.minesDiscovered() + 1)  //mines discovered ++
         }
-    }
+    };
 
     this.discoverCell = function(X,Y){
         //if cannot play, return
@@ -247,7 +256,7 @@ function mainViewModel()
             if(tthis.freeSpaces == 0)
                 tthis.win();
         }
-    }
+    };
 
     this.discoverAround = function(X,Y)
     {
@@ -285,6 +294,18 @@ function global_timerTick()
     viewModel.onTimeTick();
 }
 
+function messageViewModel()
+{
+    var tthis = this
+    this.message = ko.observable();
+    this.header = ko.observable();
+    this.standardMesage = function (messageText, messageHeader)
+    {
+        tthis.message(messageText);
+        tthis.header(messageHeader);
+        $("#dialog").dialog({modal:true});
+    }
+}
 
 //view model for cells
 function cellViewModel(x,y,model)
@@ -309,17 +330,20 @@ function cellViewModel(x,y,model)
         else if (evnt.button == 2) //right
         {
             tthis.model.markUnmarkMine(tthis.x, tthis.y);
-            evnt.preventDefault();
-            evnt.stopPropagation();
-            evnt.cancelBubble = true
+//            evnt.currentTarget.unbind("mouseup");
         }
-    }
+    };
 
     this.discoverCellsAround= function(viewmodel,evnt)
     {
         tthis.model.discoverAround(tthis.x, tthis.y);
+    };
+    this.onContextMenu = function(viewmodel,evnt)
+    {
+        evnt.preventDefault();
+        return false;
     }
-};
+}
 
 //viewModel for rows
 function rowViewModel (width,rowNumber, model)
@@ -330,7 +354,7 @@ function rowViewModel (width,rowNumber, model)
     this.cells = new Array(width);
     for (var i = 0 ; i < width; i++)
         this.cells[i] = new cellViewModel(this.rowNumber, i, model);
-};
+}
 
 //view model for board
 function boradViewModel (height, width, model)
@@ -368,6 +392,6 @@ function boradViewModel (height, width, model)
         return result;
     }
 
-};
+}
 
 
