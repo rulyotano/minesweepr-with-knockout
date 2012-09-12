@@ -110,7 +110,11 @@ button{
 
 
 .markedAsMineButEmptyCell{
-    background: #ffa32b;
+    background: #8fcaeb;
+    background-image: url("../images/no_mine.png");
+    background-repeat:no-repeat;
+    background-position:center;
+    background-size: 27px 27px;
     height: 30px;
     width: 30px;
 }
@@ -167,6 +171,12 @@ button{
 
 #header{
     width: 400px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+#footer{
+
     vertical-align: middle;
     text-align: center;
 }

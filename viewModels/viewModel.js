@@ -5,18 +5,31 @@ function mainViewModel()
     var tthis = this;
     var timerid = null;
 
+
+    this.allConfigs = [
+        new gameConfigViewModel("Beginner",9,9,10),
+        new gameConfigViewModel("Intermediate",16,16,40),
+        new gameConfigViewModel("Advanced",16,30,99)
+
+    ];
+
+    this.selectedConfig =ko.observable(this.allConfigs[0]);
+
     this.messageViewModel = new messageViewModel();
 
-    this.testText = ko.observable("red");
-    this.width = 9;
-    this.height = 9;
+    //Width
+    this.width = this.selectedConfig().boardWidth();
+
+    //Heigth
+    this.height = this.selectedConfig().boardHeight();
 
     //lost win
     this.isLost = ko.observable(false);
     this.isWin = ko.observable(false);
 
-    //mines
-    this.mines = ko.observable(10);
+    //Mines
+    var tmines = this.selectedConfig().mines();
+    this.mines =ko.observable(tmines);
 
     //if user is playing ot not
     this.isPlaying = false;
@@ -34,28 +47,62 @@ function mainViewModel()
 
     this.freeSpaces = (this.width * this.height) - this.mines();
 
-    //board state
-    this.boardState = new Array(this.height);
-    //initializa board state
-    for (var i = 0; i < this.height; i++)
+
+    this.createBoardState = function()
     {
-        this.boardState[i] = new Array(this.width);
-        for (var j = 0; j < this.width; j++)
-            this.boardState[i][j] = 0;
-    }
-
-    this.board = new boradViewModel(this.width , this.height, this);
-
-
-    //methods
-    this.pclearBoards = function (){
+        //board state
+        tthis.boardState = new Array(this.height);
+        //initializa board state
         for (var i = 0; i < this.height; i++)
         {
+            this.boardState[i] = new Array(this.width);
             for (var j = 0; j < this.width; j++)
-            {
                 this.boardState[i][j] = 0;
-                this.board.getCell(i,j).value(interpretations[0]);    //undiscovered
-                this.board.getCell(i,j).minesAround(null);
+        }
+    }
+
+    this.createBoardState();
+
+
+    this.board = new boradViewModel(this.height, this.width , this);
+
+    //subscriptions
+    this.selectedConfig.subscribe(
+        function(newValue){
+            global_onChangeConfig(newValue);
+    });
+
+    //methods
+    this.changeGameConfig = function(newConfig)
+    {
+        if (tthis.isPlaying)
+            tthis.resetGame();
+        var oldHeight = tthis.height;
+        var oldWidth = tthis.width;
+        var currentHeight = newConfig.boardHeight();
+        var currentWidth = newConfig.boardWidth();
+        var rowsToAdd = currentHeight - oldHeight;
+        var columnsToAdd = currentWidth - oldWidth;
+
+        if (rowsToAdd ==0 && columnsToAdd==0)
+            return;
+
+        tthis.board.updateBoard(rowsToAdd, columnsToAdd);
+
+        tthis.height = currentHeight;
+        tthis.width = currentWidth;
+        tthis.mines(newConfig.mines());
+        this.freeSpaces = (this.width * this.height) - this.mines();
+        tthis.createBoardState();
+    }
+    this.pclearBoards = function (){
+        for (var i = 0; i < tthis.height; i++)
+        {
+            for (var j = 0; j < tthis.width; j++)
+            {
+                tthis.boardState[i][j] = 0;
+                tthis.board.getCell(i,j).value(interpretations[0]);    //undiscovered
+                tthis.board.getCell(i,j).minesAround(null);
             }
         }
     };
@@ -155,13 +202,13 @@ function mainViewModel()
     this.explodeMine = function(X,Y)
     {
         //user is not playing
-        this.isPlaying = false;
+        tthis.isPlaying = false;
         
         //stop the timer
         clearTimeout(timerid);
         
         //cant play
-        this.canPlay = false;
+        tthis.canPlay = false;
         
         //set the mine that explode
         tthis.board.getCell(X,Y).value(interpretations[4]);
@@ -287,11 +334,25 @@ function mainViewModel()
     }
 }
 
+function global_onChangeConfig(newConfig)
+{
+    viewModel.changeGameConfig(newConfig);
+}
+
 //needed for the global timer
 function global_timerTick()
 {
     //global view model
     viewModel.onTimeTick();
+}
+
+//View Models
+function gameConfigViewModel(name, height, width, mines)
+{
+    this.gameName = ko.observable(name);
+    this.boardHeight = ko.observable(height);
+    this.boardWidth = ko.observable(width);
+    this.mines = ko.observable(mines);
 }
 
 function messageViewModel()
@@ -349,11 +410,32 @@ function cellViewModel(x,y,model)
 function rowViewModel (width,rowNumber, model)
 {
     var tthis = this;
+    this.width = width;
     this.rowNumber = rowNumber;
     this.model = model;
-    this.cells = new Array(width);
+    this.cells = ko.observableArray();
     for (var i = 0 ; i < width; i++)
-        this.cells[i] = new cellViewModel(this.rowNumber, i, model);
+        this.cells.push(new cellViewModel(this.rowNumber, i, model));
+
+    this.updateRow = function(columnsToAdd)
+    {
+        var futureWidth = tthis.width + columnsToAdd;
+
+        //add rows
+        if (columnsToAdd < 0)
+        {
+            var columnsToRemove = Math.abs(columnsToAdd);
+            for (var x = columnsToRemove; x > 0; x--)
+                tthis.cells.pop();
+        }
+        else
+        {
+            for (var x = tthis.width; x < futureWidth; x++)
+                tthis.cells.push( new cellViewModel(tthis.rowNumber, x, tthis.model));
+        }
+
+        tthis.width = futureWidth;
+    }
 }
 
 //view model for board
@@ -369,14 +451,14 @@ function boradViewModel (height, width, model)
     //directions: up-right-down-left-(up&right)-(down&right)-(down&left)-(up&left)
 
     this.model = model;
-    this.rows = new Array(height);
+    this.rows = ko.observableArray();
     for(var i = 0; i < height; i ++)
-        this.rows[i] = new rowViewModel(width, i, this.model);
+        this.rows.push(new rowViewModel(width, i, this.model));
 
-    var trows = this.rows;
+
     this.getCell = function(i,j)
     {
-        return trows[i].cells[j];
+        return tthis.rows()[i].cells()[j];
     };
 
     this.getCellsAround = function(X,Y)
@@ -390,7 +472,35 @@ function boradViewModel (height, width, model)
                 result.push(tthis.getCell(currentX, currentY));
         }
         return result;
-    }
+    };
+
+    this.updateBoard = function(rowsToAdd, columsToAdd)
+    {
+        var oldHeight = tthis.height;
+
+        tthis.height = tthis.height + rowsToAdd;
+        tthis.width = tthis.width + columsToAdd;
+
+        //add columns
+        for(var x = 0; x < oldHeight; x++)
+        {
+            tthis.rows()[x].updateRow(columsToAdd);
+        }
+
+        //add rows
+        if (rowsToAdd < 0)
+        {
+            var rowsToRemove = Math.abs(rowsToAdd);
+            for (var x = rowsToRemove; x > 0; x--)
+                tthis.rows.pop();
+        }
+        else
+        {
+            for (var x = oldHeight; x < tthis.height; x++)
+                tthis.rows.push( new rowViewModel(tthis.width, x, tthis.model));
+        }
+
+    };
 
 }
 
