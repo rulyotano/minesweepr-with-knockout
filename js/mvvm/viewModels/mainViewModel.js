@@ -163,6 +163,11 @@ function mainViewModel()
         self.timer_id = setTimeout(self.onTimeTick,1000);
     };
 
+    self.onContextMenu = function(viewmodel,evnt){
+        evnt.preventDefault();
+        return false;
+    };
+
     self.resetGame = function(){
         self.isPlaying = false;
 

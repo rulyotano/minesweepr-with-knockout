@@ -6,7 +6,7 @@
         <link href="styles/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
         <title>MV-VM Minesweeper</title>
     </head>
-    <body>
+    <body data-bind="event: { contextmenu: onContextMenu }">
         <div class="information">
             <table id=header class="board">
                 <tr>
@@ -35,7 +35,9 @@
         <div class="tableContainer">
             <table class="board" data-bind="foreach: board.rows">
                 <tr data-bind="foreach: cells">
-                    <td class="boardCell" data-bind="event: {mouseup:onMouseUp, dblclick:discoverCellsAround, contextmenu:onContextMenu },
+                    <td class="boardCell" data-bind="event: { mouseup:onMouseUp,
+                                                                mousedown:onMouseDown,
+                                                                dblclick:discoverCellsAround },
                                                         css: { unDiscoveredTableCell: value() == 'unDiscovered',
                                                                 discoveredAndEmptyTableCell: value() == 'discoveredAndEmpty',
                                                                 discoveredAndNumberTableCell: value() == 'discoveredAndNumber',
