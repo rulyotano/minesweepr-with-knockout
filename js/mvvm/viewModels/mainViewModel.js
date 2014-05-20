@@ -4,32 +4,16 @@ function mainViewModel()
 {
     var self = this;
     self.timer_id = null;
-
-    self.constructor =function(){
-        self.registerEvents();
-    };
-
-    /**Method for register listeners to events*/
-    self.registerEvents = function()
-    {
-        self.selectedConfig.subscribe(self.changeGameConfig);
-    };
-
-
     self.allConfigs = [
         new gameConfigViewModel("Beginner",9,9,10),
         new gameConfigViewModel("Intermediate",16,16,40),
         new gameConfigViewModel("Advanced",16,30,99)
 
     ];
-
     self.selectedConfig =ko.observable(self.allConfigs[0]);
-
-    self.messageViewModel = new messageViewModel();
 
     //Width
     self.width = self.selectedConfig().boardWidth();
-
     //Heigth
     self.height = self.selectedConfig().boardHeight();
 
@@ -40,26 +24,35 @@ function mainViewModel()
     //Mines
     var tmines = self.selectedConfig().mines();
     self.mines =ko.observable(tmines);
+    self.minesDiscovered = ko.observable(0);
+    self.minesThatLeft = ko.dependentObservable(function(){ return self.mines() - self.minesDiscovered() });
+
 
     //if user is playing ot not
     self.isPlaying = false;
-
     //if users can play - if is restarted
     self.canPlay = true;
 
     //time that left
     self.elapsedTime = ko.observable(0);
 
-    self.minesDiscovered = ko.observable(0);
-
-    //mines that left
-    self.minesThatLeft = ko.dependentObservable(function(){ return self.mines() - self.minesDiscovered() });
-
     self.freeSpaces = (self.width * self.height) - self.mines();
 
+    //view models
+    self.board = new boardViewModel(self.height, self.width , self);
+    self.messageViewModel = new messageViewModel();
 
-    self.createBoardState = function()
-    {
+    self.constructor =function(){
+        self.registerEvents();
+        self.createBoardState();
+    };
+
+    /**Method for register listeners to events*/
+    self.registerEvents = function(){
+        self.selectedConfig.subscribe(self.changeGameConfig);
+    };
+
+    self.createBoardState = function(){
         //board state
         self.boardState = new Array(self.height);
         //initializa board state
@@ -71,14 +64,8 @@ function mainViewModel()
         }
     };
 
-    self.createBoardState();
-
-
-    self.board = new boardViewModel(self.height, self.width , self);
-
     //methods
-    self.changeGameConfig = function(newConfig)
-    {
+    self.changeGameConfig = function(newConfig){
         if (self.isPlaying)
             self.resetGame();
         var oldHeight = self.height;
@@ -112,8 +99,7 @@ function mainViewModel()
         }
     };
 
-    self.generateMines = function(initialX, initialY)
-    {
+    self.generateMines = function(initialX, initialY){
         var unlocatedmines = self.mines();
         var indexArray = new Array(self.height * self.width);
 
@@ -204,8 +190,7 @@ function mainViewModel()
         }
     };
 
-    self.explodeMine = function(X,Y)
-    {
+    self.explodeMine = function(X,Y){
         //user is not playing
         self.isPlaying = false;
         
@@ -231,21 +216,19 @@ function mainViewModel()
 
         //Notification mesaje
         self.isLost(true);
-        self.messageViewModel.standardMessage("You lose :-(","Lose");
+        self.messageViewModel.lostMessage("You lose :-(","Lose");
     };
 
-    self.win = function()
-    {
+    self.win = function(){
         //stop the timer
         clearTimeout(self.timer_id);
         self.canPlay = false;
         self.isPlaying = false;
         self.isWin(true);
-        self.messageViewModel.standardMessage("You win in "+self.elapsedTime()+" seconds", "Winer!!!!!");
+        self.messageViewModel.winMessage("You win in "+self.elapsedTime()+" seconds", "Winer!!!!!");
     };
 
-    self.markUnmarkMine = function(X,Y)
-    {
+    self.markUnmarkMine = function(X,Y){
         var cell = self.board.getCell(X,Y);
 
         //check if is playing
@@ -310,8 +293,7 @@ function mainViewModel()
         }
     };
 
-    self.discoverAround = function(X,Y)
-    {
+    self.discoverAround = function(X,Y){
         var cell = self.board.getCell(X,Y);
 
         //if the cell is not e number, then return
