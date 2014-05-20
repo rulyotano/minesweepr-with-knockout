@@ -14,24 +14,37 @@ body {
 .board{
   text-align: center;
   vertical-align: middle;
-  margin-top: 10px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 10px auto;
+  border-collapse: collapse;
+  border-style: hidden;
+
+  .boardCell{
+    border: 2px solid @table-line-color;
+  }
 }
 
-.buttonWin{
-  background: url("../images/smiley.png") no-repeat center;
-  background-size: @smile-image-size @smile-image-size;
-}
-.buttonLost{
-  background: url("../images/smiley3.png") no-repeat center;
-  background-size: @smile-image-size @smile-image-size;
+.state-button
+{
+  div{
+    height: 30px;
+    width: 30px;
+  }
+
+  .buttonWin{
+    background: url("../images/smiley.png") no-repeat center;
+    background-size: @smile-image-size @smile-image-size;
+  }
+  .buttonLost{
+    background: url("../images/smiley3.png") no-repeat center;
+    background-size: @smile-image-size @smile-image-size;
+  }
+
+  .buttonNormal{
+    background: url("../images/smiley1.png") no-repeat center;
+    background-size: @smile-image-size @smile-image-size;
+  }
 }
 
-.buttonNormal{
-  background: url("../images/smiley1.png") no-repeat center;
-  background-size: @smile-image-size @smile-image-size;
-}
 .information{
   margin-left: auto;
   margin-right: auto;

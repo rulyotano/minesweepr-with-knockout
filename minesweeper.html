@@ -7,25 +7,6 @@
         <title>MV-VM Minesweeper</title>
     </head>
     <body>
-        <!--SCRIPTS-->
-        <script type="text/html" id="cellTamplate">
-            <td class="boardCell" data-bind="event: {mouseup:onMouseUp, dblclick:discoverCellsAround, contextmenu:onContextMenu }, css: { unDiscoveredTableCell: value() == 'unDiscovered', discoveredAndEmptyTableCell: value() == 'discoveredAndEmpty',discoveredAndNumberTableCell: value() == 'discoveredAndNumber',markedAsMineTableCell: value() == 'markedAsMine',exploitedMineTableCell: value() == 'exploitedMine',mineTableCell: value() == 'mine',markedAsMineButEmptyCell :value() == 'markedAsMineButEmpty' }" >
-
-                <span data-bind="text: minesAround, css: { number1Text: minesAround() == 1,number2Text: minesAround() == 2,number3Text: minesAround() == 3, number4Text: minesAround() == 4, number5Text: minesAround() == 5, number6Text: minesAround() == 6, number7Text: minesAround() == 7,number8Text: minesAround() == 8}" ></span>
-
-            </td>
-        </script>
-
-        <script type="text/html" id="rowTemplate">
-            <tr data-bind="template: { name: 'cellTamplate', foreach: cells }"></tr>
-        </script>
-
-        <script type="text/html"  id="tableTemplate">
-            <table class="board" data-bind="template: { name: 'rowTemplate', foreach: rows }"></table>
-        </script>
-
-        <!--SCRIPTS-->
-
         <div class="information">
             <table id=header class="board">
                 <tr>
@@ -34,13 +15,9 @@
                         <span data-bind="text: minesThatLeft"></span>
                     </td>
                     <td>
-                        <button class="ui-button"  data-bind="click: resetGame" >
-                            <table style="height: 30px; width: 100%">
-                                <tr >
-                                    <td height="100%" width="100%" data-bind="css: { buttonWin: isWin() , buttonLost : isLost(), buttonNormal: !isLost()&&!isWin() }"></td>
-                                </tr>
-                            </table>
-                        </button>
+                        <button class="btn state-button" data-bind="click: resetGame" >
+                            <div data-bind="css: { buttonWin: isWin() , buttonLost : isLost(), buttonNormal: !isLost()&&!isWin() }"></div>
+                       </button>
                     </td>
                     <td>
                         <img src="images/clock.png" alt="" height="26px" width="26px"/>
@@ -55,7 +32,29 @@
 
         </div>
 
-        <div class="tableContainer" data-bind="template: { name: 'tableTemplate', data: board }"></div>
+        <div class="tableContainer">
+            <table class="board" data-bind="foreach: board.rows">
+                <tr data-bind="foreach: cells">
+                    <td class="boardCell" data-bind="event: {mouseup:onMouseUp, dblclick:discoverCellsAround, contextmenu:onContextMenu },
+                                                        css: { unDiscoveredTableCell: value() == 'unDiscovered',
+                                                                discoveredAndEmptyTableCell: value() == 'discoveredAndEmpty',
+                                                                discoveredAndNumberTableCell: value() == 'discoveredAndNumber',
+                                                                markedAsMineTableCell: value() == 'markedAsMine',
+                                                                exploitedMineTableCell: value() == 'exploitedMine',
+                                                                mineTableCell: value() == 'mine',
+                                                                markedAsMineButEmptyCell : value() == 'markedAsMineButEmpty' }" >
+                       <span data-bind="text: minesAround, css: { number1Text: minesAround() == 1,
+                                                                    number2Text: minesAround() == 2,
+                                                                    number3Text: minesAround() == 3,
+                                                                    number4Text: minesAround() == 4,
+                                                                    number5Text: minesAround() == 5,
+                                                                    number6Text: minesAround() == 6,
+                                                                    number7Text: minesAround() == 7,
+                                                                    number8Text: minesAround() == 8}" ></span>
+                   </td>
+                </tr>
+            </table>
+        </div>
         <div id="footer">
             <p>
                 Game Difficulty:
@@ -75,7 +74,7 @@
                         <p data-bind="text: messageViewModel.message"></p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary">Accept</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Accept</button>
                     </div>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
