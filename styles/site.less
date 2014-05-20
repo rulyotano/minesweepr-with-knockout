@@ -1,22 +1,14 @@
+@import "colors.less";
+@import "defaults.less";
+@import "mixins.less";
+
+
 body {
   font-size: .85em;
   font-family: "Trebuchet MS", Verdana, Helvetica, Sans-Serif;
   margin: 0;
   padding: 0;
   color: #696969;
-}
-
-button{
-  height: 40px;
-  width: 40px;
-}
-
-#main {
-
-}
-
-.page {
-
 }
 
 .board{
@@ -28,20 +20,17 @@ button{
 }
 
 .buttonWin{
-  background-image: url("../images/smiley.png");background-repeat:no-repeat;
-  background-position:center;
-  background-size: 24px 24px;
+  background: url("../images/smiley.png") no-repeat center;
+  background-size: @smile-image-size @smile-image-size;
 }
 .buttonLost{
-  background-image: url("../images/smiley3.png");background-repeat:no-repeat;
-  background-position:center;
-  background-size: 24px 24px;
+  background: url("../images/smiley3.png") no-repeat center;
+  background-size: @smile-image-size @smile-image-size;
 }
 
 .buttonNormal{
-  background-image: url("../images/smiley1.png");background-repeat:no-repeat;
-  background-position:center;
-  background-size: 24px 24px;
+  background: url("../images/smiley1.png") no-repeat center;
+  background-size: @smile-image-size @smile-image-size;
 }
 .information{
   margin-left: auto;
@@ -60,113 +49,76 @@ button{
 
 /*--Cell templates-*/
 .unDiscoveredTableCell{
-  background: #8fcaeb;
-  height: 30px;
-  width: 30px;
+  background: @undiscovered-cell-background;
+  height: @cell-size;
+  width: @cell-size;
 }
 
 .discoveredAndEmptyTableCell{
-  background: #e6ebe4;
-  height: 30px;
-  width: 30px;
+  background: @discovered-cell-background;
+  height: @cell-size;
+  width: @cell-size;
 }
 
 .discoveredAndNumberTableCell{
-  background: #e6ebe4;
-  height: 30px;
-  width: 30px;
+  background: @discovered-cell-background;
+  height: @cell-size;
+  width: @cell-size;
 }
 
 .markedAsMineTableCell{
   /*background: #ebadca;*/
-  background: #8fcaeb;
-  background-image: url("../images/flag.png");background-repeat:no-repeat;
-  background-position:center;
+  background: @undiscovered-cell-background url("../images/flag.png") no-repeat center;
   background-size: 27px 27px;
-  height: 30px;
-  width: 30px;
+  height: @cell-size;
+  width: @cell-size;
 }
 
 .exploitedMineTableCell{
-  /*background: #eb2525;*/
-  background: #8fcaeb;
-  background-image: url("../images/mine.png");background-repeat:no-repeat;
-  background-position:center;
+  background: @undiscovered-cell-background url("../images/mine.png") no-repeat center;
   background-size: 27px 27px;
-  height: 30px;
-  width: 30px;
-
+  height: @cell-size;
+  width: @cell-size;
 }
 
 .mineTableCell{
-  background: #8fcaeb;
-  background-image: url("../images/mine2.png");
-  background-repeat:no-repeat;
-  background-position:center;
+  background: @undiscovered-cell-background url("../images/mine2.png") no-repeat center;
   background-size: 27px 27px;
-  height: 30px;
-  width: 30px;
+  height: @cell-size;
+  width: @cell-size;
 }
 
 
 .markedAsMineButEmptyCell{
-  background: #8fcaeb;
-  background-image: url("../images/no_mine.png");
-  background-repeat:no-repeat;
-  background-position:center;
+  background: @undiscovered-cell-background url("../images/no_mine.png") no-repeat center;
   background-size: 27px 27px;
-  height: 30px;
-  width: 30px;
+  height: @cell-size;
+  width: @cell-size;
 }
 
 .number1Text{
-  text-align:center;
-  font-family:Lucida Console;
-  color: #414fbc;
-  font-weight: bold;
-  vertical-align: middle;
+  .CellStyle(@number1-color);
 }
 .number2Text{
-  color: #2b6600;
-  font-family:Lucida Console;
-  font-weight: bold;
-  vertical-align: middle;
+  .CellStyle(@number2-color);
 }
 .number3Text{
-  color: #aa0505;
-  font-family:Lucida Console;
-  font-weight: bold;
-  vertical-align: middle;
+  .CellStyle(@number3-color);
 }
 .number4Text{
-  color: #000084;
-  font-family:Lucida Console;
-  font-weight: bold;
-  vertical-align: middle;
+  .CellStyle(@number4-color);
 }
 .number5Text{
-  color: #7c0100;
-  font-family:Lucida Console;
-  font-weight: bold;
-  vertical-align: middle;
+  .CellStyle(@number5-color);
 }
 .number6Text{
-  color:#8fcaeb;
-  font-family:Lucida Console;
-  font-weight: bold;
-  vertical-align: middle;
+  .CellStyle(@number6-color);
 }
 .number7Text{
-  color: #a70304;
-  font-family:Lucida Console;
-  font-weight: bold;
-  vertical-align: middle;
+  .CellStyle(@number7-color);
 }
 .number8Text{
-  color: #b6050c;
-  font-family:Lucida Console;
-  font-weight: bold;
-  vertical-align: middle;
+  .CellStyle(@number8-color);
 }
 
 #header{

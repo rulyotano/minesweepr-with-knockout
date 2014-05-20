@@ -1,88 +1,96 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<head>
-    <link href="styles/site.css" rel="stylesheet" type="text/css"/>
-    <link href="styles/jquery-ui-1.8.9.custom.css" rel="stylesheet" type="text/css"/>
-    <script type="text/javascript" src="js/jQuery/jquery-1.4.4.min.js"></script>
-    <script type="text/javascript" src="js/jQuery/jquery-ui-1.8.9.custom.min.js"></script>
-    <script type="text/javascript" src="js/knockout/knockout-3.1.0.js"></script>
-    <script type="text/javascript" src="js/mvvm/viewModels/mainViewModel.js"></script>
-    <script type="text/javascript" src="js/mvvm/viewModels/boardViewModel.js"></script>
-    <script type="text/javascript" src="js/mvvm/viewModels/cellViewModel.js"></script>
-    <script type="text/javascript" src="js/mvvm/viewModels/rowViewModel.js"></script>
-    <script type="text/javascript" src="js/mvvm/viewModels/messageViewModel.js"></script>
-    <script type="text/javascript" src="js/mvvm/viewModels/gameConfigViewModel.js"></script>
-    <script type="text/javascript" src="js/startPoint.js"></script>
-    <title></title>
-</head>
-<body>
+    <head>
+        <link href="styles/site.css" rel="stylesheet" type="text/css"/>
+        <link href="styles/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <title>MV-VM Minesweeper</title>
+    </head>
+    <body>
+        <!--SCRIPTS-->
+        <script type="text/html" id="cellTamplate">
+            <td class="boardCell" data-bind="event: {mouseup:onMouseUp, dblclick:discoverCellsAround, contextmenu:onContextMenu }, css: { unDiscoveredTableCell: value() == 'unDiscovered', discoveredAndEmptyTableCell: value() == 'discoveredAndEmpty',discoveredAndNumberTableCell: value() == 'discoveredAndNumber',markedAsMineTableCell: value() == 'markedAsMine',exploitedMineTableCell: value() == 'exploitedMine',mineTableCell: value() == 'mine',markedAsMineButEmptyCell :value() == 'markedAsMineButEmpty' }" >
 
-<!--SCRIPTS-->
-<script type="text/html" id="cellTamplate">
-    <td class="boardCell" data-bind="event: {mouseup:onMouseUp, dblclick:discoverCellsAround, contextmenu:onContextMenu }, css: { unDiscoveredTableCell: value() == 'unDiscovered', discoveredAndEmptyTableCell: value() == 'discoveredAndEmpty',discoveredAndNumberTableCell: value() == 'discoveredAndNumber',markedAsMineTableCell: value() == 'markedAsMine',exploitedMineTableCell: value() == 'exploitedMine',mineTableCell: value() == 'mine',markedAsMineButEmptyCell :value() == 'markedAsMineButEmpty' }" >
+                <span data-bind="text: minesAround, css: { number1Text: minesAround() == 1,number2Text: minesAround() == 2,number3Text: minesAround() == 3, number4Text: minesAround() == 4, number5Text: minesAround() == 5, number6Text: minesAround() == 6, number7Text: minesAround() == 7,number8Text: minesAround() == 8}" ></span>
 
-        <span data-bind="text: minesAround, css: { number1Text: minesAround() == 1,number2Text: minesAround() == 2,number3Text: minesAround() == 3, number4Text: minesAround() == 4, number5Text: minesAround() == 5, number6Text: minesAround() == 6, number7Text: minesAround() == 7,number8Text: minesAround() == 8}" ></span>
-
-    </td>
-</script>
-
-<script type="text/html" id="rowTemplate">
-    <tr data-bind="template: { name: 'cellTamplate', foreach: cells }"></tr>
-</script>
-
-<script type="text/html"  id="tableTemplate">
-    <table class="board" data-bind="template: { name: 'rowTemplate', foreach: rows }"></table>
-</script>
-
-<script type="text/html"  id="dialogTemplate">
-    <div id="dialog" title="Information" >
-        <span data-bind="text: message"></span>
-    </div>
-</script>
-<!--SCRIPTS-->
-
-<div data-bind="template: {name:'dialogTemplate', data:messageViewModel}"></div>
-
-<div class="information">
-    <table id=header class="board">
-        <tr>
-            <td>
-                <img src="images/mine2.png" alt="" height="26px" width="26px"/>
-                <span data-bind="text: minesThatLeft"></span>
             </td>
-            <td>
-                <button class="ui-button"  data-bind="click: resetGame" >
-                    <table style="height: 30px; width: 100%">
-                        <tr >
-                            <td height="100%" width="100%" data-bind="css: { buttonWin: isWin() , buttonLost : isLost(), buttonNormal: !isLost()&&!isWin() }"></td>
-                        </tr>
-                    </table>
-                </button>
-            </td>
-            <td>
-                <img src="images/clock.png" alt="" height="26px" width="26px"/>
-                <span data-bind="text: elapsedTime"></span>
-            </td>
-        </tr>
-    </table>
+        </script>
+
+        <script type="text/html" id="rowTemplate">
+            <tr data-bind="template: { name: 'cellTamplate', foreach: cells }"></tr>
+        </script>
+
+        <script type="text/html"  id="tableTemplate">
+            <table class="board" data-bind="template: { name: 'rowTemplate', foreach: rows }"></table>
+        </script>
+
+        <!--SCRIPTS-->
+
+        <div class="information">
+            <table id=header class="board">
+                <tr>
+                    <td>
+                        <img src="images/mine2.png" alt="" height="26px" width="26px"/>
+                        <span data-bind="text: minesThatLeft"></span>
+                    </td>
+                    <td>
+                        <button class="ui-button"  data-bind="click: resetGame" >
+                            <table style="height: 30px; width: 100%">
+                                <tr >
+                                    <td height="100%" width="100%" data-bind="css: { buttonWin: isWin() , buttonLost : isLost(), buttonNormal: !isLost()&&!isWin() }"></td>
+                                </tr>
+                            </table>
+                        </button>
+                    </td>
+                    <td>
+                        <img src="images/clock.png" alt="" height="26px" width="26px"/>
+                        <span data-bind="text: elapsedTime"></span>
+                    </td>
+                </tr>
+            </table>
 
 
-   <!--<button data-bind="click: startGame">Start</button>-->
-   <!--<span><b>Time:</b></span>-->
+           <!--<button data-bind="click: startGame">Start</button>-->
+           <!--<span><b>Time:</b></span>-->
 
-</div>
+        </div>
 
-<div class="tableContainer" data-bind="template: { name: 'tableTemplate', data: board }"></div>
-<div id="footer">
-    <p>
-        Game Difficulty:
-        <select title="Select Difficulty"  data-bind="options: allConfigs, optionsText: 'gameName', value: selectedConfig"></select>
-    </p>
-</div>
+        <div class="tableContainer" data-bind="template: { name: 'tableTemplate', data: board }"></div>
+        <div id="footer">
+            <p>
+                Game Difficulty:
+                <select title="Select Difficulty"  data-bind="options: allConfigs, optionsText: 'gameName', value: selectedConfig"></select>
+            </p>
+        </div>
+
+        <!--Modals-->
+        <div id="messageModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" data-bind="text: messageViewModel.header"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <p data-bind="text: messageViewModel.message"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary">Accept</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
 
 
-
-
-</body>
+        <script type="text/javascript" src="js/jQuery/jquery.js"></script>
+        <script type="text/javascript" src="js/knockout/knockout-3.1.0.js"></script>
+        <script type="text/javascript" src="js/bootstrap/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/mvvm/viewModels/mainViewModel.js"></script>
+        <script type="text/javascript" src="js/mvvm/viewModels/boardViewModel.js"></script>
+        <script type="text/javascript" src="js/mvvm/viewModels/cellViewModel.js"></script>
+        <script type="text/javascript" src="js/mvvm/viewModels/rowViewModel.js"></script>
+        <script type="text/javascript" src="js/mvvm/viewModels/messageViewModel.js"></script>
+        <script type="text/javascript" src="js/mvvm/viewModels/gameConfigViewModel.js"></script>
+        <script type="text/javascript" src="js/script.js"></script>
+    </body>
 </html>

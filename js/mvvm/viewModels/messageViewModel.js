@@ -10,6 +10,6 @@ function messageViewModel()
     {
         self.message(messageText);
         self.header(messageHeader);
-        $("#dialog").dialog({modal:true});
+        $('#messageModal').modal();
     }
 }

@@ -3,7 +3,7 @@ var interpretations = { 0:"unDiscovered", 1: "discoveredAndEmpty", 2:"discovered
 function mainViewModel()
 {
     var self = this;
-    var timer_id = null;
+    self.timer_id = null;
 
     self.constructor =function(){
         self.registerEvents();
@@ -174,7 +174,7 @@ function mainViewModel()
 
     self.onTimeTick = function(){
         self.elapsedTime(self.elapsedTime() + 1);
-        timer_id = setTimeout(self.onTimeTick,1000);
+        self.timer_id = setTimeout(self.onTimeTick,1000);
     };
 
     self.resetGame = function(){
@@ -188,7 +188,7 @@ function mainViewModel()
         self.minesDiscovered(0);
 
         //stop the timer
-        clearTimeout(timer_id);
+        clearTimeout(self.timer_id);
         self.canPlay = true;
         self.freeSpaces = (self.width * self.height) - self.mines();
         self.isWin(false);
@@ -210,7 +210,7 @@ function mainViewModel()
         self.isPlaying = false;
         
         //stop the timer
-        clearTimeout(timer_id);
+        clearTimeout(self.timer_id);
         
         //cant play
         self.canPlay = false;
@@ -237,7 +237,7 @@ function mainViewModel()
     self.win = function()
     {
         //stop the timer
-        clearTimeout(timer_id);
+        clearTimeout(self.timer_id);
         self.canPlay = false;
         self.isPlaying = false;
         self.isWin(true);
