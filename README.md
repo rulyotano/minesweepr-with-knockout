@@ -10,9 +10,6 @@ Technology used
 	<li>JQuery</li>
 	<li>Tweeter Bootrap</li>
 </ul>
--Knockout.js
--JQuery
--Tweeter Bootrap
 
 Game Features
 -------------
