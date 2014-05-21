@@ -11,8 +11,10 @@ Technology used
 
 Game Features
 -------------
--Left Mouse Click    :Explore cell
--Right Mouse Click   :Mark cell as mine
--Double Click        :Discover cells around
--Moth Mouse Click    :Discover cells
--F2 Key press        :New Game
+<ul>
+	<li>Left Mouse Click    :Explore cell</li>
+	<li>Right Mouse Click   :Mark cell as mine</li>
+	<li>Double Click        :Discover cells around</li>
+	<li>Moth Mouse Click    :Discover cells</li>
+	<li>F2 Key press        :New Game</li>
+</ul>
