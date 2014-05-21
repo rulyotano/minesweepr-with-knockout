@@ -1,6 +1,8 @@
 Minesweepr-With-Knockout & Mv-vM
 ================================
 
+![Alt text](screenshot.jpg?raw=true "The game in action")
+
 A complete web minesweeper game. It has been implementing using model-view-view-model pattern, it is a good example of what can be done with 'knockout.js' library, in an easy and simple way.
 
 Technology used
