@@ -36,17 +36,17 @@ function boardViewModel (height, width, model)
         return result;
     };
 
-    self.updateBoard = function(rowsToAdd, columsToAdd)
+    self.updateBoard = function(rowsToAdd, columnsToAdd)
     {
         var oldHeight = self.height;
 
         self.height = self.height + rowsToAdd;
-        self.width = self.width + columsToAdd;
+        self.width = self.width + columnsToAdd;
 
         //add columns
         for(var x = 0; x < oldHeight; x++)
         {
-            self.rows()[x].updateRow(columsToAdd);
+            self.rows()[x].updateRow(columnsToAdd);
         }
 
         //add rows

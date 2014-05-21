@@ -22,8 +22,8 @@ function mainViewModel()
     self.isWin = ko.observable(false);
 
     //Mines
-    var tmines = self.selectedConfig().mines();
-    self.mines =ko.observable(tmines);
+    var tMines = self.selectedConfig().mines();
+    self.mines =ko.observable(tMines);
     self.minesDiscovered = ko.observable(0);
     self.minesThatLeft = ko.dependentObservable(function(){ return self.mines() - self.minesDiscovered() });
 
@@ -87,7 +87,7 @@ function mainViewModel()
         self.createBoardState();
     };
 
-    self.pclearBoards = function (){
+    self.pClearBoards = function (){
         for (var i = 0; i < self.height; i++)
         {
             for (var j = 0; j < self.width; j++)
@@ -100,7 +100,7 @@ function mainViewModel()
     };
 
     self.generateMines = function(initialX, initialY){
-        var unlocatedmines = self.mines();
+        var unallocated_mines = self.mines();
         var indexArray = new Array(self.height * self.width);
 
         //array to store indexs
@@ -113,14 +113,14 @@ function mainViewModel()
                 indexCount++;
             }
 
-        while (unlocatedmines > 0)
+        while (unallocated_mines > 0)
         {
-            //genrate rnd index
+            //generate rnd index
             var rndIndex = Math.floor(Math.random()* (indexArray.length -1));
 
             if (indexArray[rndIndex][0] == initialX && indexArray[rndIndex][1] == initialY)
             {
-                //no pongas minas donde se hizo click
+                //do not put mines where was clicked
                 indexArray = indexArray.remove(rndIndex);
                 continue;
             }
@@ -130,10 +130,10 @@ function mainViewModel()
 
             //remove index
             indexArray = indexArray.remove(rndIndex);
-            unlocatedmines--;
+            unallocated_mines--;
         }
 
-        //now calcualte the numbers
+        //now calculate the numbers
         for (var i = 0; i < self.height; i++)
         {
             for (var j = 0; j < self.width; j++)
@@ -141,21 +141,17 @@ function mainViewModel()
                 //if there is mine
                 if (self.boardState[i][j] == -1)
                 {
-                    //increment 1 in all arround
+                    //increment 1 in all around
                     var cells = self.board.getCellsAround(i,j);
                     for (var k = 0; k < cells.length; k++)
                     {
-                        cell = cells[k];
+                        var cell = cells[k];
                         if (self.boardState[cell.x][cell.y] > -1)
                             self.boardState[cell.x][cell.y]++;
                     }
                 }
             }
         }
-       //only for test
-//        for (var i = 0; i < self.height; i++)
-//            for (var j = 0; j < self.width; j++)
-//                self.board.getCell(i,j).minesAround(self.boardState[i][j]);
     };
 
     self.onTimeTick = function(){
@@ -168,11 +164,16 @@ function mainViewModel()
         return false;
     };
 
+    self.onKeyPress = function(viewModel, event){
+        if (event.key == "F2" || event.keyCode == 113)
+            self.resetGame();
+    };
+
     self.resetGame = function(){
         self.isPlaying = false;
 
         //clear boards
-        self.pclearBoards();
+        self.pClearBoards();
 
         //reset variables
         self.elapsedTime(0);
@@ -219,9 +220,9 @@ function mainViewModel()
 
             }
 
-        //Notification mesaje
+        //Notification message
         self.isLost(true);
-        self.messageViewModel.lostMessage("You lose :-(","Lose");
+        self.messageViewModel.lostMessage("You lose, try again.","Lose");
     };
 
     self.win = function(){
@@ -230,7 +231,7 @@ function mainViewModel()
         self.canPlay = false;
         self.isPlaying = false;
         self.isWin(true);
-        self.messageViewModel.winMessage("You win in "+self.elapsedTime()+" seconds", "Winer!!!!!");
+        self.messageViewModel.winMessage("You win in "+self.elapsedTime()+" seconds", "Winner!!!!!");
     };
 
     self.markUnmarkMine = function(X,Y){

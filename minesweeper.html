@@ -6,12 +6,12 @@
         <link href="styles/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
         <title>MV-VM Minesweeper</title>
     </head>
-    <body data-bind="event: { contextmenu: onContextMenu }">
+    <body data-bind="event: { contextmenu: onContextMenu, keypress:onKeyPress }">
         <div class="information">
-            <table id=header class="board">
+            <table id=header>
                 <tr>
                     <td>
-                        <img src="images/mine2.png" alt="" height="26px" width="26px"/>
+                        <span class="glyphicon glyphicon-certificate"></span>
                         <span data-bind="text: minesThatLeft"></span>
                     </td>
                     <td>
@@ -20,7 +20,7 @@
                        </button>
                     </td>
                     <td>
-                        <img src="images/clock.png" alt="" height="26px" width="26px"/>
+                        <span class="glyphicon glyphicon-time"></span>
                         <span data-bind="text: elapsedTime"></span>
                     </td>
                 </tr>
