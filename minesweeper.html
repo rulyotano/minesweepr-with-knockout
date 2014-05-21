@@ -33,28 +33,30 @@
         </div>
 
         <div class="tableContainer">
-            <table class="board" data-bind="foreach: board.rows">
-                <tr data-bind="foreach: cells">
-                    <td class="boardCell" data-bind="event: { mouseup:onMouseUp,
-                                                                mousedown:onMouseDown,
-                                                                dblclick:discoverCellsAround },
-                                                        css: { unDiscoveredTableCell: value() == 'unDiscovered',
-                                                                discoveredAndEmptyTableCell: value() == 'discoveredAndEmpty',
-                                                                discoveredAndNumberTableCell: value() == 'discoveredAndNumber',
-                                                                markedAsMineTableCell: value() == 'markedAsMine',
-                                                                exploitedMineTableCell: value() == 'exploitedMine',
-                                                                mineTableCell: value() == 'mine',
-                                                                markedAsMineButEmptyCell : value() == 'markedAsMineButEmpty' }" >
-                       <span data-bind="text: minesAround, css: { number1Text: minesAround() == 1,
-                                                                    number2Text: minesAround() == 2,
-                                                                    number3Text: minesAround() == 3,
-                                                                    number4Text: minesAround() == 4,
-                                                                    number5Text: minesAround() == 5,
-                                                                    number6Text: minesAround() == 6,
-                                                                    number7Text: minesAround() == 7,
-                                                                    number8Text: minesAround() == 8}" ></span>
-                   </td>
-                </tr>
+            <table class="board" >
+                <tbody data-bind="foreach: board.rows">
+                    <tr data-bind="foreach: cells">
+                        <td class="boardCell" data-bind="event: { mouseup:onMouseUp,
+                                                                    mousedown:onMouseDown,
+                                                                    dblclick:discoverCellsAround },
+                                                            css: { unDiscoveredTableCell: value() == 'unDiscovered',
+                                                                    discoveredAndEmptyTableCell: value() == 'discoveredAndEmpty',
+                                                                    discoveredAndNumberTableCell: value() == 'discoveredAndNumber',
+                                                                    markedAsMineTableCell: value() == 'markedAsMine',
+                                                                    exploitedMineTableCell: value() == 'exploitedMine',
+                                                                    mineTableCell: value() == 'mine',
+                                                                    markedAsMineButEmptyCell : value() == 'markedAsMineButEmpty' }" >
+                           <span data-bind="text: minesAround, css: { number1Text: minesAround() == 1,
+                                                                        number2Text: minesAround() == 2,
+                                                                        number3Text: minesAround() == 3,
+                                                                        number4Text: minesAround() == 4,
+                                                                        number5Text: minesAround() == 5,
+                                                                        number6Text: minesAround() == 6,
+                                                                        number7Text: minesAround() == 7,
+                                                                        number8Text: minesAround() == 8}" ></span>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
         <div id="footer">
