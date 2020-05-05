@@ -5,6 +5,17 @@ Minesweepr-With-Knockout & Mv-vM
 
 My first introduction to web testing application. A complete web minesweeper game. It has been implementing using model-view-view-model pattern, it is a good example of what can be done with 'knockout.js' library, in an easy and simple way. I used this library because had a very close similarty to the Wpf's MVVM pattern philosophy that I knwed.
 
+
+Updated: Added npm for starting server and local publishing it
+---------------
+```
+npm start
+```
+```
+npm ngrok-it
+```
+
+
 Technology used
 ---------------
 <ul>
