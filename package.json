@@ -1,0 +1,32 @@
+{
+  "name": "minesweepr-with-knockout",
+  "version": "1.0.0",
+  "description": "Academic Minesweeper implementation",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js",
+    "ngrok-it": "ngrok http 3005",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rulyotano/minesweepr-with-knockout.git"
+  },
+  "keywords": [
+    "minesweeper",
+    "web",
+    "javascript",
+    "knockout"
+  ],
+  "author": "rulyotano",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rulyotano/minesweepr-with-knockout/issues"
+  },
+  "homepage": "https://github.com/rulyotano/minesweepr-with-knockout#readme",
+  "devDependencies": {},
+  "dependencies": {
+    "express": "^4.17.1",
+    "ngrok": "^3.2.7"
+  }
+}
